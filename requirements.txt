@@ -1,0 +1,5 @@
+flask
+flask_mysqldb
+mysql-connector-python
+requests
+pyopenssl

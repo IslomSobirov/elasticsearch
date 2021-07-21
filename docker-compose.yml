@@ -1,0 +1,69 @@
+version: "3.8"
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/python/Dockerfile
+        links: 
+            - "db"
+            - "elasticsearch"
+            - "kibana"
+        ports: 
+            - "5000:5000"
+        volumes: 
+            - .:/code
+        environment:
+            FLASK_ENV: development
+        networks: 
+            - elastic
+    db:
+        image: mysql:5.7
+        container_name: search-db
+        ports: 
+            - 3306:3306
+        volumes:
+            - ./:/var/www/html/
+            - mysql_data:/var/lib/mysql
+            - ./db/express_test_db_updated.sql
+        restart: always
+        environment:
+            MYSQL_USER: bitrix_admin
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_PASSWORD: express_db_pass
+            MYSQL_DATABASE: express_db
+            MYSQL_PASSWORD: root
+        working_dir: /var/www/html
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+        container_name: elasticsearch
+        environment:
+            - discovery.type=single-node
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        volumes:
+            - vibhuviesdata:/usr/share/elasticsearch/data
+        ports:
+            - 9200:9200
+        networks:
+            - elastic
+        labels:
+            - co.elastic.logs/module=elasticsearch
+            - co.elastic.metrics/module=elasticsearch
+    kibana:
+        image: docker.elastic.co/kibana/kibana:7.7.0
+        container_name: kibana
+        ports:
+            - 5601:5601
+        depends_on:
+            - elasticsearch
+        environment:
+            ELASTICSEARCH_URL: http://elasticsearch:9200
+            ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+        networks:
+            - elastic
+volumes:
+    mysql_data:
+    vibhuviesdata:
+        driver: local
+networks:
+    elastic:
+        driver: bridge
