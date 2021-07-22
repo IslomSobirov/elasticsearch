@@ -5,22 +5,20 @@ import mysql.connector
 import requests
 
 app = Flask(__name__)
-# app.run(debug=True, host='0.0.0.0', port=5000)
 
 mydb = mysql.connector.connect(
-        host="185.74.5.8",
-        user="bitrix_admin",
-        password="1658761b",
-        database="express_db_2020_08_04"
+        host="",
+        user="",
+        password="",
+        database=""
     )
 
-searchRoute = "localhost:9200"
 
 @app.route('/')
 def hello_world():
 
     return {
-        "message": "Hellow"
+        "message": "Hello"
     }
 
 @app.route('/blogs', methods=['GET', 'POST'])
