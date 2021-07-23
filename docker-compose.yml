@@ -24,7 +24,6 @@ services:
         volumes:
             - ./:/var/www/html/
             - mysql_data:/var/lib/mysql
-            - ./db/express_test_db_updated.sql
         restart: always
         environment:
             MYSQL_USER: bitrix_admin
